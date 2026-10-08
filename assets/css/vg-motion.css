@@ -1,0 +1,152 @@
+/* Verdant ESG — motion layer (v2)
+   One motion language for every page: calm, precise, expo-out easing, nothing bouncy except the leaf badges.
+   Works in two modes:
+   • CSS mode (the canvas, or any page without GSAP): blocks marked .rv get .in from an IntersectionObserver,
+     heroes play a staggered entrance on load, photos unmask, hairlines draw, badges pop.
+   • GSAP mode (html.gs, set by motion.js on the live site): GSAP takes over the hero timeline, headline line
+     reveals, word-by-word statements, photo unmask + parallax and the dark CTA expand. Everything keyed off
+     .in (hairlines, lists, badges, steps) still runs from this file in both modes. */
+
+:root{--e-out:cubic-bezier(.16,1,.3,1);--e-io:cubic-bezier(.65,0,.35,1);--e-back:cubic-bezier(.34,1.56,.64,1)}
+.vg{--sweep:var(--accent)}
+.vg.p-mint{--sweep:#2A2A2A}
+.vg.p-forest{--sweep:#F2F5F3}
+
+/* ---------- Always-on interaction polish (hover / focus) ---------- */
+:root .vg .btn{position:relative;isolation:isolate;overflow:hidden}
+:root .vg .btn::before{content:"";position:absolute;inset:0;z-index:-1;background:var(--sweep);transform:scaleX(0);transform-origin:right center;transition:transform .6s var(--e-out)}
+:root .vg .btn:hover::before,:root .vg .btn:focus-visible::before{transform:scaleX(1);transform-origin:left center}
+:root .vg .btn.inv::before{background:var(--deep-fg)}
+:root .vg .btn.inv:hover,:root .vg .btn.inv:focus-visible{background:var(--deep-accent)}
+:root .vg .btn.ghost::before{background:var(--fg)}
+:root .vg .btn.ghost:hover,:root .vg .btn.ghost:focus-visible{background:transparent;color:var(--bg)}
+:root .vg .btn.inv-ghost::before{background:var(--deep-fg)}
+:root .vg .btn.inv-ghost:hover,:root .vg .btn.inv-ghost:focus-visible{color:var(--deep)}
+:root .vg .tlink{background:linear-gradient(currentColor,currentColor) left bottom/0% 1px no-repeat;transition:background-size .7s var(--e-out),border-color .3s,color .3s}
+:root .vg .tlink:hover,:root .vg a:hover .tlink,:root .vg .tlink:focus-visible{background-size:100% 1px}
+:root .vg :is(.card,.lens-c,.limits li,.post-link,.qcard,.report){transition:translate .7s var(--e-out),box-shadow .7s var(--e-out),background-color .5s,border-color .5s}
+:root .vg :is(.card,.lens-c,.limits li,.post-link):hover{translate:0 -6px;box-shadow:0 28px 56px -32px rgba(20,24,16,.32)}
+:root .vg .card .card-k .lb{transition:rotate .6s var(--e-back),scale .6s var(--e-back),background-color .5s}
+:root .vg .card:hover .card-k .lb{rotate:-24deg;scale:1.35}
+:root .vg .guide{transition:background-color .5s,box-shadow .7s var(--e-out)}
+:root .vg .guide:hover{box-shadow:0 30px 60px -36px rgba(20,24,16,.35)}
+:root .vg :is(.guide-art svg,.leaf8){transition:rotate 1s var(--e-out),scale 1s var(--e-out)}
+:root .vg .guide:hover :is(.guide-art svg,.leaf8){rotate:-4deg;scale:1.04}
+:root .vg .nav{transition:background-color .35s ease,border-color .35s ease,translate .6s var(--e-out)}
+:root:not(.gs) .vg .nav.is-hidden{translate:0 -101%}
+:root .vg .toc-list a.is-on{color:var(--fg)}
+:root .vg .toc-list a.is-on .lb{background:var(--accent-ink)}
+:root .vg .toc-list a.is-on .n{color:var(--accent-ink)}
+html.lenis,html.lenis body{height:auto}
+html.lenis{scroll-behavior:auto !important}
+
+/* Page transition curtain (added by motion.js on the live site) */
+.vg .pt{position:fixed;inset:0;z-index:300;display:grid;place-items:center;background:var(--deep);pointer-events:none;transform:scaleY(0);transform-origin:bottom center}
+.vg .pt i{display:block;width:56px;height:43px;background:var(--deep-accent);-webkit-mask:url("../leaf/masks/m-sprout-nav.svg") center/100% 100% no-repeat;mask:url("../leaf/masks/m-sprout-nav.svg") center/100% 100% no-repeat;opacity:0}
+
+@media (prefers-reduced-motion: no-preference){
+
+/* ---------- 1. Base reveal, refined ---------- */
+:root .vg.rv-on .rv{opacity:0;transform:translate3d(0,32px,0);transition:opacity 1s var(--e-out),transform 1.25s var(--e-out)}
+:root .vg.rv-on .rv.in{opacity:1;transform:none}
+/* siblings in grids land one after another */
+:root .vg.rv-on :is(.fw,.cards,.pairs,.limits,.posts,.lens,.sol,.stats) > .rv:nth-child(3n+2),:root .vg.rv-on .g12 > .rv + .rv{transition-delay:.1s}
+:root .vg.rv-on :is(.fw,.cards,.pairs,.limits,.posts,.lens,.sol,.stats) > .rv:nth-child(3n+3){transition-delay:.2s}
+:root .vg.rv-on .fw.four > .rv:nth-child(4n+4){transition-delay:.3s}
+/* revealing cards keep their hover lift: reveal props first, hover props after, delays only on the reveal */
+:root .vg.rv-on :is(.card,.lens-c,.limits li,.qcard,.report).rv{transition:opacity 1s var(--e-out),transform 1.25s var(--e-out),translate .7s var(--e-out),box-shadow .7s var(--e-out),background-color .5s}
+:root .vg.rv-on :is(.cards,.limits,.lens) > .rv:nth-child(3n+2),:root .vg.rv-on .g12 > .qcard.rv{transition-delay:.1s,.1s,0s,0s,0s}
+:root .vg.rv-on :is(.cards,.limits,.lens) > .rv:nth-child(3n+3){transition-delay:.2s,.2s,0s,0s,0s}
+
+/* ---------- 2. Lists: each row rises in turn ---------- */
+:root .vg.rv-on .rv :is(.ll,.rows,.nlist,.tl,.alist,.terms,.toc-list) > li,
+:root .vg.rv-on .rv:is(.sys,.steps,.rows,.alist,.ll,.nlist,.tl,.pr6,.chk) > *,
+:root .vg.rv-on .rv .report ol > li,:root .vg.rv-on .rv.report ol > li,
+:root .vg.rv-on .rv .chk > *,:root .vg.rv-on .rv.chk > *{opacity:0;transform:translate3d(0,18px,0);transition:opacity .9s var(--e-out),transform 1.05s var(--e-out)}
+:root .vg.rv-on .rv.in :is(.ll,.rows,.nlist,.tl,.alist,.terms,.toc-list) > li,
+:root .vg.rv-on .rv.in:is(.sys,.steps,.rows,.alist,.ll,.nlist,.tl,.pr6,.chk) > *,
+:root .vg.rv-on .rv.in .report ol > li,:root .vg.rv-on .rv.report.in ol > li,
+:root .vg.rv-on .rv.in .chk > *,:root .vg.rv-on .rv.chk.in > *{opacity:1;transform:none}
+:root .vg.rv-on .rv.in :is(.ll,.rows,.nlist,.tl,.alist,.terms,.toc-list,.chk) > :nth-child(1),:root .vg.rv-on .rv.in .report ol > :nth-child(1){transition-delay:.12s}
+:root .vg.rv-on .rv.in :is(.ll,.rows,.nlist,.tl,.alist,.terms,.toc-list,.chk) > :nth-child(2),:root .vg.rv-on .rv.in .report ol > :nth-child(2){transition-delay:.19s}
+:root .vg.rv-on .rv.in :is(.ll,.rows,.nlist,.tl,.alist,.terms,.toc-list,.chk) > :nth-child(3),:root .vg.rv-on .rv.in .report ol > :nth-child(3){transition-delay:.26s}
+:root .vg.rv-on .rv.in :is(.ll,.rows,.nlist,.tl,.alist,.terms,.toc-list,.chk) > :nth-child(4),:root .vg.rv-on .rv.in .report ol > :nth-child(4){transition-delay:.33s}
+:root .vg.rv-on .rv.in :is(.ll,.rows,.nlist,.tl,.alist,.terms,.toc-list,.chk) > :nth-child(5),:root .vg.rv-on .rv.in .report ol > :nth-child(5){transition-delay:.4s}
+:root .vg.rv-on .rv.in :is(.ll,.rows,.nlist,.tl,.alist,.terms,.toc-list,.chk) > :nth-child(6),:root .vg.rv-on .rv.in .report ol > :nth-child(6){transition-delay:.47s}
+:root .vg.rv-on .rv.in :is(.ll,.rows,.nlist,.tl,.alist,.terms,.toc-list,.chk) > :nth-child(7),:root .vg.rv-on .rv.in .report ol > :nth-child(7){transition-delay:.54s}
+:root .vg.rv-on .rv.in :is(.ll,.rows,.nlist,.tl,.alist,.terms,.toc-list,.chk) > :nth-child(n+8),:root .vg.rv-on .rv.in .report ol > :nth-child(n+8){transition-delay:.61s}
+:root .vg.rv-on .rv.in:is(.sys,.steps,.rows,.alist,.ll,.nlist,.tl,.pr6,.chk) > :nth-child(1){transition-delay:.1s}
+:root .vg.rv-on .rv.in:is(.sys,.steps,.rows,.alist,.ll,.nlist,.tl,.pr6,.chk) > :nth-child(2){transition-delay:.18s}
+:root .vg.rv-on .rv.in:is(.sys,.steps,.rows,.alist,.ll,.nlist,.tl,.pr6,.chk) > :nth-child(3){transition-delay:.26s}
+:root .vg.rv-on .rv.in:is(.sys,.steps,.rows,.alist,.ll,.nlist,.tl,.pr6,.chk) > :nth-child(4){transition-delay:.34s}
+:root .vg.rv-on .rv.in:is(.sys,.steps,.rows,.alist,.ll,.nlist,.tl,.pr6,.chk) > :nth-child(5){transition-delay:.42s}
+:root .vg.rv-on .rv.in:is(.sys,.steps,.rows,.alist,.ll,.nlist,.tl,.pr6,.chk) > :nth-child(6){transition-delay:.5s}
+:root .vg.rv-on .rv.in:is(.sys,.steps,.rows,.alist,.ll,.nlist,.tl,.pr6,.chk) > :nth-child(n+7){transition-delay:.58s}
+/* the leaf bullets bud open as their row arrives */
+:root .vg.rv-on .rv :is(.ll li,.eyebrow,.tl li) .lb,:root .vg.rv-on .rv.ll li .lb{scale:0;rotate:-40deg;transition:scale .9s var(--e-back) .25s,rotate .9s var(--e-back) .25s,background-color .5s}
+:root .vg.rv-on .rv.in :is(.ll li,.eyebrow,.tl li) .lb,:root .vg.rv-on .rv.ll.in li .lb{scale:1;rotate:0deg}
+
+/* ---------- 3. Hairlines draw left to right ---------- */
+:root .vg.rv-on :is(.fw,.pairs) > li.rv{border-top-color:transparent;position:relative}
+:root .vg.rv-on :is(.fw,.pairs) > li.rv::before{content:"";position:absolute;left:0;right:0;top:-1px;height:1px;background:var(--line);transform:scaleX(0);transform-origin:left center;transition:transform 1.4s var(--e-io)}
+:root .vg.rv-on .sol > li.rv{border-bottom-color:transparent;position:relative}
+:root .vg.rv-on .sol > li.rv::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:1px;background:var(--line);transform:scaleX(0);transform-origin:left center;transition:transform 1.5s var(--e-io) .15s}
+:root .vg.rv-on :is(.fw,.pairs) > li.rv.in::before,:root .vg.rv-on .sol > li.rv.in::after{transform:scaleX(1)}
+:root .vg.rv-on .rv.statement,:root .vg.rv-on .rv .statement{border-top-color:transparent;background:linear-gradient(var(--line),var(--line)) left top/0% 1px no-repeat;transition:background-size 1.4s var(--e-io) .2s}
+:root .vg.rv-on .rv.in.statement,:root .vg.rv-on .rv.in .statement{background-size:100% 1px}
+
+/* ---------- 4. Leaf index badges pop, workflow steps light up in order ---------- */
+:root .vg.rv-on .rv .idx{scale:.35;rotate:-22deg;opacity:0;transition:scale 1s var(--e-back) .15s,rotate 1s var(--e-back) .15s,opacity .4s ease .15s}
+:root .vg.rv-on .rv.in .idx{scale:1;rotate:0deg;opacity:1}
+:root .vg.rv-on .steps.rv li::before{transform:scaleX(0);transform-origin:left center;transition:transform .9s var(--e-io)}
+:root .vg.rv-on .steps.rv li::after{scale:0;transition:scale .8s var(--e-back),background-color .5s}
+:root .vg.rv-on .steps.rv.in li::before{transform:scaleX(1)}
+:root .vg.rv-on .steps.rv.in li::after{scale:1}
+:root .vg.rv-on .steps.rv li:nth-child(2)::before,:root .vg.rv-on .steps.rv li:nth-child(2)::after{transition-delay:.18s}
+:root .vg.rv-on .steps.rv li:nth-child(3)::before,:root .vg.rv-on .steps.rv li:nth-child(3)::after{transition-delay:.36s}
+:root .vg.rv-on .steps.rv li:nth-child(4)::before,:root .vg.rv-on .steps.rv li:nth-child(4)::after{transition-delay:.54s}
+:root .vg.rv-on .steps.rv li:nth-child(5)::before,:root .vg.rv-on .steps.rv li:nth-child(5)::after{transition-delay:.72s}
+:root .vg.rv-on .steps.rv li:nth-child(6)::before,:root .vg.rv-on .steps.rv li:nth-child(6)::after{transition-delay:.9s}
+:root .vg.rv-on .stem-div .sd-lf{scale:0;transform-origin:8% 95%;transition:scale 1s var(--e-back) .95s,background-color .5s}
+:root .vg.rv-on .stem-div.in .sd-lf{scale:1}
+:root .vg.rv-on .stem-div .sd .lf2{transform-box:fill-box;transform-origin:8% 95%;scale:0;transition:scale 1s var(--e-back) .95s}
+:root .vg.rv-on .stem-div.in .sd .lf2{scale:1}
+:root .vg.rv-on .stem-div .sd .st{stroke-dasharray:140;stroke-dashoffset:140;transition:stroke-dashoffset 1s var(--e-io) .55s}
+:root .vg.rv-on .stem-div.in .sd .st{stroke-dashoffset:0}
+
+/* ---------- 5. CSS-mode only (GSAP does these on the live site) ---------- */
+/* hero entrance on load */
+:root:not(.gs) .vg .nav{animation:vgNav 1s var(--e-out) both}
+:root:not(.gs) .vg :is(.phero,.hero,.ahero) :is(.eyebrow,.crumb){animation:vgUp .9s var(--e-out) .15s both}
+:root:not(.gs) .vg :is(.phero,.hero,.ahero) .h1{animation:vgWipe 1.3s var(--e-out) .25s both}
+:root:not(.gs) .vg :is(.ph-lead,.ph-sub,.alead,.hero .lead){animation:vgUp 1s var(--e-out) .5s both}
+:root:not(.gs) .vg .phero .aside-note{animation:vgUp 1s var(--e-out) .6s both}
+:root:not(.gs) .vg :is(.ph-intro,.aintro,.hero .cta-row){animation:vgUp 1.1s var(--e-out) .7s both}
+:root:not(.gs) .vg .contact .cform{animation:vgUp 1.2s var(--e-out) .5s both}
+:root:not(.gs) .vg .contact .c-direct{animation:vgUp 1.1s var(--e-out) .75s both}
+/* section headings wipe up as their block arrives */
+:root:not(.gs) .vg.rv-on .rv .h2,:root:not(.gs) .vg.rv-on .rv.h2{clip-path:inset(0 0 100% 0);translate:0 .35em;transition:clip-path 1.2s var(--e-out) .08s,translate 1.2s var(--e-out) .08s}
+:root:not(.gs) .vg.rv-on .rv.in .h2,:root:not(.gs) .vg.rv-on .rv.in.h2{clip-path:inset(-.2em -.1em -.3em -.1em);translate:0 0}
+/* photos unmask and settle */
+:root:not(.gs) .vg.rv-on .aphoto.rv{opacity:1;transform:none}
+:root:not(.gs) .vg.rv-on .aphoto.rv .ph{clip-path:inset(10% 7% 10% 7%);transition:clip-path 1.7s var(--e-out)}
+:root:not(.gs) .vg.rv-on .aphoto.rv.in .ph{clip-path:inset(0 0 0 0)}
+:root:not(.gs) .vg.rv-on .aphoto.rv .ph img{scale:1.22;transition:scale 2.2s var(--e-out)}
+:root:not(.gs) .vg.rv-on .aphoto.rv.in .ph img{scale:1}
+:root:not(.gs) .vg.rv-on .aphoto.rv figcaption{opacity:0;translate:0 10px;transition:opacity .9s var(--e-out) .5s,translate .9s var(--e-out) .5s}
+:root:not(.gs) .vg.rv-on .aphoto.rv.in figcaption{opacity:1;translate:0 0}
+:root:not(.gs) .vg.rv-on .post-img img{scale:1.12;transition:scale 1.8s var(--e-out),transform .8s cubic-bezier(.2,.7,.2,1)}
+:root:not(.gs) .vg.rv-on .rv.in .post-img img,:root:not(.gs) .vg.rv-on .post-link:hover .post-img img{scale:1}
+
+@keyframes vgNav{from{opacity:0;transform:translate3d(0,-100%,0)}to{opacity:1;transform:none}}
+@keyframes vgUp{from{opacity:0;transform:translate3d(0,28px,0)}to{opacity:1;transform:none}}
+@keyframes vgWipe{from{clip-path:inset(0 0 100% 0);transform:translate3d(0,.4em,0)}to{clip-path:inset(-.2em -.1em -.35em -.1em);transform:none}}
+
+/* scroll-linked extras where the browser supports scroll-driven animations */
+@supports (animation-timeline: view()){
+:root:not(.gs) .vg .deep{animation:vgDeepIn linear both;animation-timeline:view();animation-range:entry 0% entry 75%}
+:root:not(.gs) .vg :is(.nleaf,.aleaf){animation:vgDrift linear both;animation-timeline:view();animation-range:exit 0% exit 100%}
+}
+@keyframes vgDeepIn{from{clip-path:inset(0 3.5% round 44px)}to{clip-path:inset(0 0 round 0)}}
+@keyframes vgDrift{from{translate:0 0}to{translate:0 -60px}}
+}

@@ -1,0 +1,114 @@
+Redesign the homepage for Verdant ESG, a UK green-claims / greenwashing regulatory risk consultancy. Homepage only, desktop (1440) and mobile (390). The look should feel like 2027: minimal, very corporate, confident, calm. Think a top-tier advisory firm, not a "save the planet" eco brand.
+
+ATTACHED
+- verdant-esg-logo.png: black "Verdant" wordmark with a green sprout above the "t", "ESG" spaced out underneath. Use as-is; on dark backgrounds make the wordmark white and keep the sprout green.
+- verdant-leaf.svg: the sprout from the logo, already traced as clean vector, in its original gradient
+- verdant-leaf-mono.svg: the same sprout in a single colour (fill = currentColor) for recolouring
+- Cedora font files (Regular 400, Bold 700). Use Cedora for everything. Fallback: system-ui, sans-serif.
+
+TYPOGRAPHY (keep exactly this system)
+- Hero H1: Cedora Bold, 48–72px, tight leading, letter-spacing -0.02em
+- Section H2: Bold, 36–48px, tight leading
+- Card H3: Bold, 20–24px
+- Eyebrow/kicker: Bold, 12–14px, uppercase, wide tracking
+- Body: Regular, 16–17px, relaxed leading
+- Caption/muted: Regular, 13–14px, grey
+- Base font size 17px mobile / 16px desktop
+Let scale and weight do the work. No second typeface, no italics for decoration.
+
+THE LEAF: the core idea
+The logo mark is a two-leaf sprout: a smaller leaf pointing left and a larger leaf pointing up-right, joined by a short curved stem that tails down to the right. Each leaf has a thin slit-shaped cutout through its centre (a negative-space vein). In the logo it is filled with a left-to-right gradient, #316535 → #67B545.
+Use the attached SVG exactly. Do not redraw it or swap in a generic leaf icon. Build the whole visual identity from this one mark, always as crisp vector:
+- Hero centrepiece: the sprout very large and cropped off the right edge. On load, its outline draws in as a thin stroke, then fills, then the two slits open. Slow and elegant.
+- Single-leaf module: split the sprout into its two leaves and use one leaf as a reusable shape
+  - tiny single leaves as bullets/list markers
+  - the 01–06 index numbers set inside small single-leaf shapes
+  - card and image corners: one corner pointed like the leaf tip, the opposite corner rounded, the other two square
+- The slit cutout: reuse that thin pointed slit as a graphic stroke, e.g. underline/strike-through on the Red Zone terms and as accent dashes
+- The stem curve: use the stem's S-curve as a thin section-divider line ending in a small leaf
+- Nav scroll indicator: a small sprout beside the logo that fills from bottom to top as you scroll
+- Button/link hover: the arrow grows a small leaf
+- Footer: an oversized sprout outline (stroke only, no fill) cropped off the bottom edge
+Do NOT: scatter faded rotated leaf watermarks behind sections, use leaf photos, or use green gradient blobs or glowing orbs. The old site did that, and it's exactly what we're moving away from.
+
+COLOUR: the client wants to experiment
+Build every colour as a CSS variable token, so the leaf (mono SVG via currentColor), buttons, accents and backgrounds all recolour together. Add a small, discreet palette switcher (bottom-right pill) with these presets:
+1. Verdant (default): Green Dark #49926E (primary), Green Light #77F8C0 (accent), Black #000000, Grey #808080, Grey Light #F5F5F5, White #FFFFFF, Border #E0E0E0. Leaf graphics use the logo gradient #316535 → #67B545.
+2. Deep Forest (dark): background #0E1F17, surface #142A20, text #F2F5F3, accent #77F8C0, leaf #67B545
+3. Mono + Mint: background #FFFFFF, text and primary #0A0A0A, leaf and one accent in #77F8C0 only
+4. Moss & Stone: background #F4F2EC, text #141414, primary #5E7A4A, accent #C9D8A8, leaf #5E7A4A
+The sprout in the logo itself always keeps its original green; only the wordmark flips black/white. Default to a mostly white canvas with ONE deep block section for contrast. Use colour sparingly. No full-page gradients.
+
+LAYOUT & FEEL
+- 12-column grid, generous whitespace, hairline (1px) rules, strong left alignment, asymmetric editorial compositions
+- Max content width 1400px, 32px side padding (mobile 20px)
+- Nav: logo left; Home, About, Services (dropdown), Resources; "Contact" pill button right. Minimal, slightly translucent on scroll.
+- Primary button: Green Dark background, white text; on hover the text turns black
+- Motion: subtle and purposeful (fade/rise on scroll, the sprout drawing in, number counters). Nothing bouncy.
+- No AI demo, no interactive claim checker, no fake product UI. This is a consultancy site.
+
+CONTENT (use this copy verbatim, restructured into the new design)
+
+1. HERO
+Eyebrow: ESG Consultancy
+H1: Environmental Claims are now Enforcement Realities.  ("Enforcement" in accent colour)
+Body: The era of aspirational green marketing is over. Today, environmental statements can prompt legal scrutiny. We provide the technical rigour and evidence-led consultancy required to assess green claims and protect your commercial reputation.
+Primary CTA: Assess Your Exposure (to /contact)
+Secondary link: View Our Governance Framework (scrolls to the framework section)
+
+2. THE PROBLEM
+Eyebrow: The Problem. H2: A Gap in Scrutiny
+H3: Why Greenwashing is Now a Boardroom Risk.
+Body: Regulators are increasingly categorising environmental claims as greenwashing where they are vague, exaggerated, or unsubstantiated — closing the gap between corporate ambition and verifiable action.
+Stats: 3 — Core Exposure Risks · 6 — CMA Principles · 100% — Substantiation Required
+Regulatory Focus: Regulators such as the CMA and ASA, applying the CAP Code, are shifting from voluntary guidance to strictly enforced disclosure. They now scrutinise: the clarity of claims; the context in which they are presented; how they are understood by consumers; the evidence supporting them.
+The Compliance Standard: It is no longer enough for a claim to be technically true in a narrow sense. Environmental communication must also be: clear and unambiguous; avoid misleading by omission; reflect the appropriate scope of the product or service; based on verifiable, contemporaneous evidence.
+Your Exposure (3 cards):
+- The Substantiation Trap: Broad, aspirational statements such as "Net Zero" or "Sustainable" made without an internal evidence repository that survives an audit are being flagged by regulators as inherently deceptive. Every claim must be supported by data accessible at the point of sale.
+- Misleading by Omission: Highlighting a single 'green' feature while ignoring significant environmental impacts elsewhere in the supply chain is no longer viable. Total lifecycle transparency is becoming the new legal baseline.
+- Compliance Lag: Marketing cycles move quicker than legal and ESG teams can verify data, leading to unqualified claims that can attract ASA/CAP sanctions. Alignment between creative and compliance teams is now a strategic necessity.
+Pull quote: Greenwashing is a Governance Failure, Not a Marketing Choice.
+
+3. THE FRAMEWORK
+Eyebrow: The Framework. H2: CMA's Six-Point Test. Sub: Precision over Persuasion
+Body: We align your commercial output with the CMA Green Claims Code. Our consultancy ensures that every statement satisfies the six fundamental principles of the new regulatory framework.
+01 Truthful and Accurate — Move beyond halo effects and into factual precision.
+02 Clear and Unambiguous — Ensure consumers aren't misled by technical jargon.
+03 No Omission of Material Information — Provide the full picture of environmental impacts.
+04 Fair and Meaningful Comparisons — Defend your "greenest" or "more sustainable" assertions.
+05 Contextually Complete — Prove that a benefit in one section of the product's lifecycle is not offset by negative impacts in another.
+06 Full Substantiation — Build the contemporaneous evidence packs needed to mount a defence.
+Callout: Evidence must exist at the point a claim is made and not be developed retroactively.
+
+4. THE RED ZONE (the one deep-colour block)
+Eyebrow: The 'Red Zone' Terminology. H2: Is your vocabulary creating liability?
+Body: In the current regulatory environment, "absolute" claims must be accompanied by absolute proof. We specialise in de-risking high-stakes terminology.
+Terms: Net Zero · Carbon Neutral · Sustainable · Eco-Friendly · Responsibly Sourced
+Such terms often call for: refining the scope and boundaries; transparent methodology; evidentiary support; clearly explaining limitations.
+Note: Without this, they may be considered misleading due to ambiguity or lack of substantiation.
+
+5. SERVICES (new section: an elegant index or list, each item links to its page)
+- Green Claims Risk Audit — Find Weakpoints In Your Communication Ecosystem
+- Ongoing Compliance Support — Reduce Risk on Fast-Moving Brands
+- Supply Chain Transparency Review — Connecting What You Say to What Actually Happens
+- Regulatory Response Readiness — Prepare Before Scrutiny Arrives
+- AI-Assisted Green Claims Screening — Built by Regulatory Specialists. Trained on the Right Risks. (small "Tool" tag; just a service listing, no demo)
+Link: View all services (to /services)
+
+6. RESOURCES (one featured guide card)
+Tag: Guide. Title: 8 Greenwashing Risks Every Brand Should Check Before Publishing a Sustainability Claim
+Excerpt: A pre-publication checklist for the eight most common — and most frequently penalised — categories of misleading environmental claim.
+Link to /resources/8-greenwashing-risks
+
+7. CTA
+H2: Move from Vulnerability to Verified Compliance
+Body: Do not let your environmental claims become regulatory liabilities.
+Button: Book a Technical Consultation (to /contact)
+
+8. FOOTER
+Newsletter: "Stay Updated" / Subscribe to Our Newsletter / Get the latest ESG insights, industry trends, and sustainability updates delivered to your inbox.
+Columns: Company (Home, About, Contact) · Services (the 5 above) · Resources (Insights & Guides, 8 Greenwashing Risks)
+Email: hello@verdantesg.com
+Bottom bar: © 2026 Verdant ESG. All rights reserved. · Privacy Policy · Terms of Use
+
+Deliver a polished, production-quality homepage the client can react to, with the palette switcher working.
