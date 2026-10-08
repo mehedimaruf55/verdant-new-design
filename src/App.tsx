@@ -17,9 +17,9 @@ import { Footer } from './sections/Footer';
 const STORAGE_KEY = 'verdant-palette';
 const isPalette = (v: unknown): v is PaletteId => typeof v === 'string' && v in PALETTES;
 
-/** The switcher is a client-review tool: hidden unless the URL has `?palette` (or `?palette=forest` to preselect). */
+/** Matches the prototype: switcher visible and remembered. Set to false (or gate on `?palette`) before launch. */
 const params = new URLSearchParams(window.location.search);
-const SWITCHER_ON = params.has('palette');
+const SWITCHER_ON = true;
 
 function initialPalette(): PaletteId {
   const q = params.get('palette');
